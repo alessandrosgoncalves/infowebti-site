@@ -1,0 +1,17 @@
+RECONSTRUÇÃO DO SITE DA INFOWEBTI
+
+Reconstruí o site institucional da InfoWebTI, empresa especializada em infraestrutura de TI que atua desde 2006.
+
+O que foi entregue:
+
+- 8 páginas principais e 3 artigos de blog
+- SEO completo (sitemap.xml, robots.txt e meta tags otimizadas)
+- PWA com ícones e manifest (funciona como um aplicativo)
+- Design responsivo para desktop, tablet e celular
+- Testes automatizados e manuais aprovados: 11/11 páginas válidas e 85 links internos sem quebras
+- Correção de bugs de JavaScript e dos ícones do aplicativo
+
+Código-fonte disponível no GitHub:
+https://github.com/alessandrosgoncalves/infowebti-site
+
+#DesenvolvimentoWeb #Frontend #TI #Tecnologia #InfoWebTI

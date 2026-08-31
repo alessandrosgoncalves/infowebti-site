@@ -1,0 +1,24 @@
+CASE TÉCNICO: SITE INSTITUCIONAL INFO WEB TI
+
+Escopo
+Reconstrução completa do site da InfoWebTI Soluções Tecnológicas (empresa de TI ativa desde 2006).
+
+Entregas
+- Frontend: 8 páginas (home, sobre, serviços, projetos, blog, contato, política) + 3 artigos de blog
+- SEO: viewport e meta tags em todas as páginas, sitemap.xml e sitemap.html, robots.txt
+- PWA: site.webmanifest + ícones 16x16, 32x32, 192x192, 512x512 e apple-touch-icon
+- CSS/JS: folha de estilos única e JavaScript vanilla (menu, animações, formulário, stats)
+- Responsividade: layout adaptado para desktop, tablet e mobile
+
+Qualidade e testes
+- 11/11 páginas estruturalmente válidas
+- 85 links internos verificados (0 quebrados) e âncoras íntegras
+- sitemap.xml válido (10 URLs) e robots.txt correto
+- Bug de JavaScript (observador de estatísticas) corrigido
+- Ícones PWA gerados e referenciados corretamente
+- Classificação final: APTO PARA DEPLOY
+
+Código-fonte
+https://github.com/alessandrosgoncalves/infowebti-site
+
+#DesenvolvimentoWeb #Frontend #HTML #CSS #JavaScript #PWA #SEO #TI #InfoWebTI
