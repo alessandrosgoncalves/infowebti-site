@@ -1,0 +1,20 @@
+# Pastas antigas / material de trabalho (nao entram no repositorio)
+/infowebti/
+/infowebti-site/
+/site-informatica/
+
+# Arquivos compactados de versoes anteriores
+*.zip
+*.7z
+
+# Sistema e temporarios
+Thumbs.db
+.DS_Store
+*.tmp
+~$*
+
+# Logs e builds (caso existam)
+node_modules/
+dist/
+.vscode/
+.idea/

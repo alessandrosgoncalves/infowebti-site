@@ -1,0 +1,21 @@
+{
+    "name": "InfoWebTI Soluções Tecnológicas",
+    "short_name": "InfoWebTI",
+    "description": "Soluções de infraestrutura de TI para empresas",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0f1c",
+    "theme_color": "#3b82f6",
+    "icons": [
+        {
+            "src": "img/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "img/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
