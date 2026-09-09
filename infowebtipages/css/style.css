@@ -1635,6 +1635,31 @@ footer {
     border-color: var(--accent-blue);
 }
 
+.footer-column .social-btn,
+.social-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.footer-column .social-btn.whatsapp,
+.social-btn.whatsapp {
+    background: linear-gradient(135deg, #25d366, #128c7e);
+}
+
+.footer-column .social-btn:hover,
+.social-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    color: var(--text-light);
+}
+
 .footer-bottom {
     text-align: center;
     padding-top: 2rem;
