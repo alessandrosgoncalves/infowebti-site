@@ -997,6 +997,104 @@ nav a:hover {
     }
 }
 
+/* Economia de Custos de TI Section */
+.economia {
+    padding: 6rem 5%;
+    background: linear-gradient(180deg, #0d1321 0%, var(--primary-dark) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.economia .section-kick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 1rem;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.2rem;
+}
+
+.economia .section-header h2 {
+    max-width: 700px;
+    margin: 0 auto 1rem;
+}
+
+.economia-box {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.economia-tese p {
+    color: var(--text-gray);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.economia-tese .economia-gt {
+    color: var(--text-light);
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-bottom: 1.2rem;
+}
+
+.economia-tese .economia-gc {
+    margin-bottom: 2rem;
+}
+
+.economia-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.economia-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    padding: 1.1rem 1.2rem;
+    color: var(--text-light);
+    font-size: 0.98rem;
+    line-height: 1.5;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.economia-list li:hover {
+    border-color: rgba(59, 130, 246, 0.35);
+    transform: translateX(6px);
+}
+
+.economia-check {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+@media (max-width: 900px) {
+    .economia-box {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+}
+
 /* Projects Section */
 .projects {
     padding: 6rem 5%;

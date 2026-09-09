@@ -19,9 +19,10 @@
     <meta property="og:url" content="https://www.infowebti.com.br/blog/artigo-migracao-nuvem.html" />
     <meta property="og:site_name" content="Infowebti Soluções Tecnológicas" />
     <meta property="og:locale" content="pt_BR" />
-    <meta property="article:author" content="https://www.facebook.com/infowebti" />
-    <meta property="article:publisher" content="https://www.facebook.com/infowebti" />
+    <meta property="article:author" content="https://www.facebook.com/profile.php?id=100083200977364" />
+    <meta property="article:publisher" content="https://www.facebook.com/profile.php?id=100083200977364" />
     <link rel="me" href="https://www.instagram.com/infowebtioficial" />
+    <link rel="me" href="https://www.facebook.com/profile.php?id=100083200977364" />
     <meta property="twitter:domain" content="https://www.infowebti.com.br" />
     <meta property="twitter:title" content="Migração para a Nuvem: Guia Completo para sua Empresa | InfoWebTI" />
     <meta property="twitter:description" content="Migração para a Nuvem: Guia Completo para sua Empresa" />
@@ -151,6 +152,15 @@
         .article-footer .prev-next { display: flex; gap: 1rem; }
 
         footer { padding: 2rem 5%; background: #060a13; text-align: center; color: var(--text-gray); font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        footer p { display: inline-flex; align-items: center; justify-content: center; gap: 0.8rem; flex-wrap: wrap; }
+        footer .social-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            color: #fff; font-size: 1.2rem; text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        footer .social-btn.whatsapp { background: linear-gradient(135deg, #25d366, #128c7e); }
+        footer .social-btn.whatsapp:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
 
         @media (max-width: 768px) {
             .article-hero h1 { font-size: 1.8rem; }
@@ -235,8 +245,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 InfoWebTI. Todos os direitos reservados. | <a href="../blog.html" style="color: var(--accent-cyan); text-decoration: none;">Voltar ao Blog</a></p>
-        <a href="https://wa.me/5512982454379" target="_blank" class="social-btn whatsapp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <p>&copy; 2026 InfoWebTI. Todos os direitos reservados. | <a href="../blog.html" style="color: var(--accent-cyan); text-decoration: none;">Voltar ao Blog</a> <a href="https://wa.me/5512982454379" target="_blank" class="social-btn whatsapp" aria-label="WhatsApp" title="Fale conosco no WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
     </footer>
 </body>
 </html>
