@@ -902,6 +902,101 @@ nav a:hover {
     }
 }
 
+/* Depoimentos Section */
+.depoimentos {
+    padding: 6rem 5%;
+    background: var(--primary-dark);
+}
+
+.depoimentos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.depoimento-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+/* Movimento das laterais para o centro ao rolar (entrada e saída) */
+.depoimento-card.slide-left {
+    opacity: 0;
+    transform: translateX(-120px);
+    transition: opacity 0.7s ease, transform 0.7s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.depoimento-card.slide-center {
+    opacity: 0;
+    transform: translateY(80px);
+    transition: opacity 0.7s ease, transform 0.7s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.depoimento-card.slide-right {
+    opacity: 0;
+    transform: translateX(120px);
+    transition: opacity 0.7s ease, transform 0.7s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.depoimento-card.visible {
+    opacity: 1;
+    transform: translate(0, 0);
+}
+
+.depoimento-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(6, 182, 212, 0.15);
+}
+
+.depoimento-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 1.2rem;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: var(--text-light);
+}
+
+.depoimento-card h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.3rem;
+}
+
+.depoimento-card p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 0.8rem;
+}
+
+.depoimento-card span {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .depoimentos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Projects Section */
 .projects {
     padding: 6rem 5%;

@@ -68,9 +68,8 @@ function animateCounter(element, target) {
 const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            animateCounter(document.getElementById('stat1'), 300);
-            animateCounter(document.getElementById('stat2'), 20);
-            animateCounter(document.getElementById('stat3'), 100);
+            animateCounter(document.getElementById('stat1'), 15);
+            animateCounter(document.getElementById('stat3'), 20);
             statsObserver.disconnect();
         }
     });
@@ -152,6 +151,21 @@ if (produtosGrid) {
         });
     }, { threshold: 0.15 });
     produtosObserver.observe(produtosGrid);
+}
+
+// Depoimentos: cards das laterais ao centro, em ambas as direções da rolagem
+const depoimentoCards = document.querySelectorAll('.depoimento-card.slide-left, .depoimento-card.slide-center, .depoimento-card.slide-right');
+if (depoimentoCards.length > 0) {
+    const depoimentosObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            } else {
+                entry.target.classList.remove('visible');
+            }
+        });
+    }, { threshold: 0.3 });
+    depoimentoCards.forEach(card => depoimentosObserver.observe(card));
 }
 
 // Serviços: spotlight que segue o mouse nos cards
