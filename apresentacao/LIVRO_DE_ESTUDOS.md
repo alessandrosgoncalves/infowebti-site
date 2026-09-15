@@ -357,6 +357,14 @@ Fluxo completo dominado: `conectar.php` (usuário limitado) → `SELECT` + `JOIN
 - **Hábito que nasceu:** conferir **todas** as portas com um SELECT antes de encerrar o dia — fechar uma não fecha as outras
 - **Lição de camadas:** `ALTER USER` mexe na **conta global** (não precisa de `USE`); `INSERT` mexe **dentro de um banco** (precisa do `USE` para apontar a gaveta)
 
+### 3.12 O anônimo `''@'%'` (14/09/2026)
+- No painel apareceu a linha **`Qualquer` @ `%`** = usuário **anônimo** (`''@'%'`): host `%` = aceita conexão de **qualquer origem**, sem senha, privilégio `USAGE` (só conecta, sem poderes)
+- **Risco:** porta de entrada sem chave — conecta sem credencial (em rede aberta, alvo de marteladas)
+- **Armadilha do teste no Windows:** `mysql` **sem `-u` envia o usuário do sistema** (`lab`), não o vazio → o `Access denied` do teste mostrou a conta `lab`, **não** o anônimo. Lição: teste bem desenhado, senão prova a coisa errada
+- phpMyAdmin recusou usuário em branco, mas a prova final veio do banco: `DROP USER ''@'%';` → `Query OK` → `SELECT ... WHERE user = ''` → **Empty set**
+- **Depois do DROP:** conexão sem usuário não casa conta nenhuma → `Access denied` (ninguém entra sem credencial)
+- **`pma`** @`localhost` (usuário de controle do próprio phpMyAdmin) ficou intacto — removê-lo quebraria painel, sem ganho
+
 ---
 
 ## CAPÍTULO 4 — Frases de guarda (Dev + DBA)
@@ -408,6 +416,9 @@ Fluxo completo dominado: `conectar.php` (usuário limitado) → `SELECT` + `JOIN
 - "Root tem 3 portas (localhost, 127.0.0.1, ::1) — fecha as 3, ou uma fica aberta sem você saber."
 - "Fechar uma porta não fecha as outras; conferir todas antes de encerrar."
 - "`ALTER USER` mexe na conta global (sem `USE`); `INSERT` mexe dentro do banco (precisa de `USE`)."
+- "No Windows, `mysql` sem `-u` envia o usuário do sistema — teste mal desenhado prova a coisa errada."
+- "Conta anônima (`''@'%'`) é porta sem chave: qualquer origem conecta sem credencial. `DROP USER ''@'%';`"
+- "Painel pode mentir (erro #1046 no comando que passou); o CLI mostra a verdade."
 
 ### Regra de ouro do curso (vale para todas as fases)
 - "Eu escrevo, executo e confiro. O revisor só corrige."
