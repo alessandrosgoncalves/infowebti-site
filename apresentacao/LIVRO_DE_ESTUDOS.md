@@ -349,6 +349,14 @@ Fluxo completo dominado: `conectar.php` (usuário limitado) → `SELECT` + `JOIN
 - **Lição de arquitetura:** `cookie` = o navegador guarda sua sessão; `new mysqli(usuario, senha)` = o PHP autentica **direto no MySQL**, sem navegador. Por isso o site (`conectar.php`) não quebrou com a troca pro cookie — ele nem participa da tela de login
 - **Frase-mãe:** *Navegador autentica por SESSÃO (cookie). Programa/conexão autentica por CREDENCIAL (senha no código).*
 
+### 3.11 A porta que ficou aberta: `::1` sem senha (14/09/2026)
+- Ao revisar o painel, achei `root@::1` com **`Não` em senha** → brecha que eu tinha dito "fechada" baseado só no teste de `127.0.0.1` (errei ao generalizar; só afirmo o que vi)
+- `::1` = o `localhost` em **IPv6** — mesma porta da frente, outro protocolo. Conexões por IPv6 entrariam como root livre
+- **Por que não travou antes:** o `ALTER USER` tranca a porta **que recebeu ordem** — `::1` nunca foi endereçada no comando anterior
+- Confirmado com `SELECT password FROM mysql.user` → `::1` vazio → `ALTER USER 'root'@'::1' IDENTIFIED BY ...` → **PROTEGIDO**
+- **Hábito que nasceu:** conferir **todas** as portas com um SELECT antes de encerrar o dia — fechar uma não fecha as outras
+- **Lição de camadas:** `ALTER USER` mexe na **conta global** (não precisa de `USE`); `INSERT` mexe **dentro de um banco** (precisa do `USE` para apontar a gaveta)
+
 ---
 
 ## CAPÍTULO 4 — Frases de guarda (Dev + DBA)
@@ -398,6 +406,8 @@ Fluxo completo dominado: `conectar.php` (usuário limitado) → `SELECT` + `JOIN
 - "`config` = segredo no arquivo (chave pendurada na porta); `cookie` = segredo digitado por você a cada sessão."
 - "Navegador autentica por SESSÃO (cookie); programa/conexão autentica por CREDENCIAL (senha no código)."
 - "Root tem 3 portas (localhost, 127.0.0.1, ::1) — fecha as 3, ou uma fica aberta sem você saber."
+- "Fechar uma porta não fecha as outras; conferir todas antes de encerrar."
+- "`ALTER USER` mexe na conta global (sem `USE`); `INSERT` mexe dentro do banco (precisa de `USE`)."
 
 ### Regra de ouro do curso (vale para todas as fases)
 - "Eu escrevo, executo e confiro. O revisor só corrige."
