@@ -9,8 +9,9 @@ Motivação: prática real de back end e DBA + caminho CLT → CNPJ (depoimento 
 - **F1** ✓ fundamentos PHP (variáveis, arrays, foreach, ==/===, $_POST)
 - **F2** ✓ MySQL/modelagem (banco + tabelas + FK + UPDATE/JOIN)
 - **F0.5** ✓ 3 defeitos do site antigo resolvidos (a conferir)
-- **Próxima:** FASE 3 — PHP conectando ao MySQL (prepared statements)
-- **Diário detalhado:** `LIVRO_DE_ESTUDOS.md` (Capítulos 0, 1 e 2 escritos; 3 reservado)
+- **F3** ✓ PHP + MySQL + prepared statements (conexão mysqli, SELECT/JOIN, moderação aprovado, SQL Injection vista e parada) — 14/09/2026
+- **Próxima:** FASE 4 — Autenticação (login)
+- **Diário detalhado:** `LIVRO_DE_ESTUDOS.md` (Capítulos 0, 1, 2 e 3 escritos)
 
 ---
 
@@ -141,21 +142,21 @@ depoimentos  (id, cliente_id FK, texto, aprovado (0/1), criado_em)
 
 ---
 
-## FASE 3 — Ligando PHP ao MySQL (a parte que mais dá pesadelo)
+## FASE 3 — Ligando PHP ao MySQL (a parte que mais dá pesadelo) — ✓ CONCLUÍDA (14/09/2026)
 
 Triagem de três formas de conectar:
 1. `mysqli` procedural → simples mas verboso
-2. `mysqli` OO → **recomendado**
+2. `mysqli` OO → **recomendado** (usamos este)
 3. `PDO` → mais moderno, recomendado para futuro (Laravel usa)
 
 **NORMA INEGOCIÁVEL: PREPARED STATEMENTS.**
 - NUNCA monte query com string concat: `"SELECT * FROM x WHERE email='$email'"` = **SQL Injection**
 - Sempre: `$stmt = $conn->prepare(...); $stmt->bind_param(...)`
 
-**Exercício:**
-1. Página que lista depoimentos do banco num loop
-2. Formulário que insere um depoimento (sem login ainda)
-3. Tente injetar SQL manualmente e **veja como o prepared statement salva**
+**Exercício** (feito em 14/09/2026, detalhes no LIVRO Capítulo 3):
+1. Página que lista depoimentos do banco num loop → `listar.php` funcionando
+2. Formulário/busca com `?` e `bind_param` → `buscar.php` filtrou correto
+3. Injeção manual testada: sem `?` (concat) **vazou tudo**; com `?` (prepare) **segurou nada** — e o arquivo vulnerável foi apagado
 
 ---
 
@@ -183,10 +184,9 @@ Regra de negócio (igual ao mundo real): **cliente envia → admin aprova → p�
 - Tela admin (você) lista pendentes e tem botão aprovar/reprovar
 - Após aprovar: `UPDATE depoimentos SET aprovado = 1 WHERE id = ?`
 
-**Exercício:**
-- Envie depoimento de nem sempre aprovado e veja a lista pública não mudar
-- Depois aprove e veja aparecer
-- Adicione "**data**" no depoimento e **ordene do mais recente** (`ORDER BY criado_em DESC`)
+**Já provado na F3 (não repetir):** inserir com `aprovado=0` e ver a página pública NÃO mudar → `UPDATE ... SET aprovado = 1` → aparecer (e com data, ordenado por `criado_em DESC`). LIVRO Capítulo 3, seções 3.5-3.6.
+
+**Falta para a F5:** montar a **tela do admin** (lista de pendentes com botão aprovar/reprovar) sobre a base que já existe, e o **formulário público** de inserção (F3 fez via SQL/CLI; aqui o depoimento virá do HTML com `$_POST` e `prepare`).
 
 ---
 
@@ -244,7 +244,7 @@ Depois de dominar local, sobe:
 1. XAMPP + `ola.php` → **DOMINADO** (09/09/2026)
 2. Arrays + formulários POST → **DOMINADO** (09/09/2026)
 3. modelar no papel + 3FN → **DOMINADO** (09/09/2026)
-4. `mysqli` + prepared statement (INSERT/SELECT) → a fazer (Fase 3)
+4. `mysqli` + prepared statement (INSERT/SELECT) → **DOMINADO** (14/09/2026)
 5. login com hash + sessão → a fazer (Fase 4)
 6. aprovação (UPDATE) → a fazer (Fase 5)
 7. segurança (XSS/senha/CSRF) → a fazer (Fase 6)
