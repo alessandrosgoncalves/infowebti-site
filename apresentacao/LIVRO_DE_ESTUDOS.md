@@ -340,6 +340,15 @@ buscar_vulneravel.php?q=x' OR 1=1 --
 ### 3.9 Conclusão da F3
 Fluxo completo dominado: `conectar.php` (usuário limitado) → `SELECT` + `JOIN` + `WHERE` + `ORDER BY` → `prepare`/`bind_param`/`execute`/`get_result` → moderação `aprovado` comprovada → injeção vista (vulnerável vaza) e parada (prepare segura). Regras: menor privilégio, sem concat em SQL, dados no jogo eu escrevo e o revisor corrige.
 
+### 3.10 Fechando o cofre: senha no root + phpMyAdmin com login (14/09/2026)
+- Descobrimento: o XAMPP vinha com `auth_type='config'`, user `root`, password vazio, `AllowNoPassword=true` → **qualquer um abrindo o phpMyAdmin era root direto**, o oposto do menor privilégio estudado na F3
+- **root tem 3 identidades** em `mysql.user`: `localhost`, `127.0.0.1`, `::1` — cada **par (usuário, host)** é autenticado separado. O teste `mysql -h 127.0.0.1` provou: **todas fechadas** (1045 fora da senha)
+- Aplicado `ALTER USER 'root'@'localhost'/'127.0.0.1'/'::1' IDENTIFIED BY 'senha'`
+- phpMyAdmin trocado para `auth_type='cookie'` em `config.inc.php` → **tela de login**
+- Entraram: `root` (poder total) e `infowebti_app` (só dados) — cada um com **sua** senha
+- **Lição de arquitetura:** `cookie` = o navegador guarda sua sessão; `new mysqli(usuario, senha)` = o PHP autentica **direto no MySQL**, sem navegador. Por isso o site (`conectar.php`) não quebrou com a troca pro cookie — ele nem participa da tela de login
+- **Frase-mãe:** *Navegador autentica por SESSÃO (cookie). Programa/conexão autentica por CREDENCIAL (senha no código).*
+
 ---
 
 ## CAPÍTULO 4 — Frases de guarda (Dev + DBA)
@@ -386,6 +395,9 @@ Fluxo completo dominado: `conectar.php` (usuário limitado) → `SELECT` + `JOIN
 - "Atacante não chuta uma vez — ajusta até a aspa fechar."
 - "Sem espaço depois do `--`, não é comentário: sintaxe quebra."
 - "Armas vulneráveis não ficam em casa: `buscar_vulneravel.php` virou 404."
+- "`config` = segredo no arquivo (chave pendurada na porta); `cookie` = segredo digitado por você a cada sessão."
+- "Navegador autentica por SESSÃO (cookie); programa/conexão autentica por CREDENCIAL (senha no código)."
+- "Root tem 3 portas (localhost, 127.0.0.1, ::1) — fecha as 3, ou uma fica aberta sem você saber."
 
 ### Regra de ouro do curso (vale para todas as fases)
 - "Eu escrevo, executo e confiro. O revisor só corrige."
