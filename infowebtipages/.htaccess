@@ -1,0 +1,63 @@
+# ============================================================
+#  Compression (gzip/deflate) — habilitado pelo Apache
+# ============================================================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json application/xml image/svg+xml
+</IfModule>
+
+# ============================================================
+#  MIME types complementares (WebP/AVIF/fontes)
+# ============================================================
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/avif .avif
+  AddType font/woff2 .woff2
+  AddType font/woff .woff
+  AddType image/svg+xml .svg
+</IfModule>
+
+# ============================================================
+#  Cache (Expires) — acelera visitas repetidas
+# ============================================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+
+  # HTML / dados
+  ExpiresByType text/html        "access plus 1 hour"
+  ExpiresByType application/json "access plus 1 hour"
+  ExpiresByType application/xml  "access plus 1 hour"
+  ExpiresByType text/xml         "access plus 1 hour"
+
+  # CSS / JS (imutáveis; o ?v=1.x invalida quando mudar)
+  ExpiresByType text/css               "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript        "access plus 1 year"
+
+  # Imagens
+  ExpiresByType image/jpeg   "access plus 1 year"
+  ExpiresByType image/png    "access plus 1 year"
+  ExpiresByType image/gif    "access plus 1 year"
+  ExpiresByType image/webp   "access plus 1 year"
+  ExpiresByType image/avif   "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+
+  # Fontes
+  ExpiresByType font/woff  "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/ttf   "access plus 1 year"
+  ExpiresByType font/otf   "access plus 1 year"
+</IfModule>
+
+# ============================================================
+#  Cache-Control complementar (mod_headers)
+# ============================================================
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|mjs|webp|avif|jpe?g|png|gif|svg|woff2?|ttf|otf|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+</IfModule>
