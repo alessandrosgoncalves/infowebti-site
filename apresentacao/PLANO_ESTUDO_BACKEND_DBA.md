@@ -10,8 +10,9 @@ Motivação: prática real de back end e DBA + caminho CLT → CNPJ (depoimento 
 - **F2** ✓ MySQL/modelagem (banco + tabelas + FK + UPDATE/JOIN)
 - **F0.5** ✓ 3 defeitos do site antigo resolvidos (a conferir)
 - **F3** ✓ PHP + MySQL + prepared statements (conexão mysqli, SELECT/JOIN, moderação aprovado, SQL Injection vista e parada) — 14/09/2026
-- **Próxima:** FASE 4 — Autenticação (login)
-- **Diário detalhado:** `LIVRO_DE_ESTUDOS.md` (Capítulos 0, 1, 2 e 3 escritos)
+- **F4** ✓ Autenticação completa — hash, cadastro, login, logout, página protegida e isolamento por usuário (teste de 2 clientes) — **27/09/2026**
+- **Próxima:** FASE 5 (tela admin + depoimento via `$_POST`)
+- **Diário detalhado:** `LIVRO_DE_ESTUDOS.md` (Capítulos 0 a 5)
 
 ---
 
@@ -160,18 +161,18 @@ Triagem de três formas de conectar:
 
 ---
 
-## FASE 4 — Autenticação (o "login")
+## FASE 4 — Autenticação (o "login") — ✓ CONCLUÍDA (27/09/2026)
 
 Quatro blocos:
 
-1. **Cadastro**: `password_hash($senha, PASSWORD_DEFAULT)` — NUNCA senha em texto puro
-2. **Login**: `password_verify()` + `session_start()` + `$_SESSION['cliente_id']`
-3. **Logout**: `session_destroy()` + `session_unset()`
-4. **Proteção de página**: no topo de toda tela restrita, `if (!isset($_SESSION['cliente_id'])) { header('Location: login.php'); exit; }`
+1. **Cadastro** ✓ — `password_hash($senha, PASSWORD_DEFAULT)` — checagem de duplicado (SELECT antes do INSERT) + `else` no fluxo. LIVRO 5.2
+2. **Login** ✓ — `password_verify()` + `session_start()` + `$_SESSION['cliente_id']`; mensagem genérica (anti-enumeração); casos feliz e negativo provados. LIVRO 5.4
+3. **Logout** ✓ — `session_destroy()` + `session_unset()` + redirect
+4. **Proteção de página** ✓ — porteira no topo de toda tela restrita: `if (!isset($_SESSION['cliente_id'])) { header('Location: login.php'); exit; }` — provada expulsando acesso direto ao `perfil.php`
 
-**Exercício:**
-- Cadastro → login → tela "Área do Cliente" → logout
-- Teste: dois usuários, cada um vê SÓ os próprios dados (dica: `WHERE cliente_id = ?`)
+**Teste que fechou a fase:** 2 clientes com depoimentos reais; cada um logado viu **só os próprios** depoimentos (`WHERE cliente_id = ?` + `$_SESSION['cliente_id']`). Isolamento por dono comprovado.
+
+LIVRO Capítulo 5.7/5.8 aponta todo o fechamento.
 
 ---
 
@@ -220,7 +221,7 @@ Aprofunde o que a FASE 2 introduziu:
 Depois de dominar local, sobe:
 
 1. **Exportar BD** do phpMyAdmin local → importar no cPanel (phpMyAdmin do host)
-2. `secrets.php` fora de `public_html` (ou acima de `public_html`) com credenciais do BD
+2. `secrets.php` fora de `public_html` (ou acima de `public_html`) com credenciais do BD — **já testado local:** o `.env` dentro de `htdocs` era servido pelo Apache (200) e foi bloqueado com `.htaccess` (403). Em produção o segredo sai de vez da raiz web (LIVRO 5.6)
 3. Ajustar `mysqli` para `localhost` (nome certinho do host, quase sempre é `localhost`)
 4. A página pública de depoimentos: trocar os cards estáticos atuais por um `depoimentos.php` que lê do banco (`aprovado=1`)
 5. Testar em produção: cadastro → login → envio → aprovação → aparece no site
@@ -245,7 +246,7 @@ Depois de dominar local, sobe:
 2. Arrays + formulários POST → **DOMINADO** (09/09/2026)
 3. modelar no papel + 3FN → **DOMINADO** (09/09/2026)
 4. `mysqli` + prepared statement (INSERT/SELECT) → **DOMINADO** (14/09/2026)
-5. login com hash + sessão → a fazer (Fase 4)
+5. login com hash + sessão → **DOMINADO** (27/09/2026) — cadastro, login, logout, página protegida e isolamento por usuário provados
 6. aprovação (UPDATE) → a fazer (Fase 5)
 7. segurança (XSS/senha/CSRF) → a fazer (Fase 6)
 8. backup/restore + EXPLAIN + índices → a fazer (Fase 7)

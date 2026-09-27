@@ -50,8 +50,9 @@ echo 'Bem-vindo, $nome!';   // Bem-vindo, $nome!  (não substitui!)
 Com aspas simples o PHP **não** interpola. Para juntar, usa concatenação com `.`:
 
 ```php
-echo 'Bem-vindo, ' . $nome . '!';
+echo 'Bem-vindo, ' . $nome . '!'; // Bem-vindo, Alessandro!
 ```
+**Dica de ouro:** Aspas simples, o echo imprime tudo em texto (precisa concatenar com .), aspas duplas o echo imprime texto mais a variavel (concatena).
 
 **Regra:** aspas duplas interpolam; aspas simples são textos puros.
 
@@ -420,11 +421,111 @@ Fluxo completo dominado: `conectar.php` (usuário limitado) → `SELECT` + `JOIN
 - "Conta anônima (`''@'%'`) é porta sem chave: qualquer origem conecta sem credencial. `DROP USER ''@'%';`"
 - "Painel pode mentir (erro #1046 no comando que passou); o CLI mostra a verdade."
 
+### Fase 4 (autenticação — hash, sessão e login)
+- "Hash não é criptografia: tritura em pó e não devolve — verifica, não recupera."
+- "O sal mora dentro do hash: `$2y$10$` guarda custo + sal + resultado — por isso dá para verificar sem guardar a senha."
+- "`password_verify` não guarda nada (sem buffer): relê o sal de dentro do hash, retritura o digitado e compara pó com pó."
+- "O que grava no banco é o hash pronto — senha crua nunca entra na tabela."
+- "`type="password"` esconde a digitação na tela (privacidade), mas NÃO criptografa o caminho — isso é papel do HTTPS."
+- "`$_POST` vazio ainda é POST: o `REQUEST_METHOD === 'POST'` confirma o verbo; os `empty()` conferem a carga."
+- "O método confirma o veículo; a validação confere a carga."
+- "Sem o `else`, o `$erro` não bloqueia nada: o INSERT rodaria mesmo com campo vazio. Erro informa; o `else` impede."
+- "Checagem de duplicado é sua, no PHP: SELECT antes do INSERT. O banco é o último guardião, nunca o único."
+- "Porta tripla do formulário: form → validação → banco."
+- "Erro cru do banco (Duplicate entry) é o último véu te salvando; a mensagem amigável é você salvando antes."
+- "Mensagem genérica: 'E-mail ou senha incorretos' nos dois casos — não entrega mapa ao atacante (anti-enumeração)."
+- "`session_start()` antes de qualquer saída: o cookie vai no header, e header só existe antes do corpo (senão: headers already sent)."
+- "Sessão guarda a PK (`cliente_id`), não o e-mail — identidade que nunca muda."
+- "Texto puro no banco é passivo: um dia a verificação falha e você apaga o dado (o José `'aaa'`)."
+- "Comentário não é código: plano com números no lugar do código = parse error na linha 5."
+- "Apagar pai com filho = FK grita #1451; filho morre primeiro, o pai depois."
+- "Segredo dentro da raiz web vaza: o Apache serviu o `.env` (200). Block com `.htaccess` = 403. Em produção, segredo mora FORA do `public_html`."
+- "Quem nunca entrou não tem o que destruir: a porteira manda sem sessão para o LOGIN, não para o logout."
+- "Isolamento por dono: `WHERE cliente_id = ?` + `$_SESSION['cliente_id']` — cada usuário vê só o que é dele."
+- "`bind_param('i')` no INT: o tipo do `?` importa — id é número, não string."
+- "A coluna é `cliente_id`; 'FK' é o papel (a constraint). MySQL filtra pelo NOME da coluna."
+
 ### Regra de ouro do curso (vale para todas as fases)
 - "Eu escrevo, executo e confiro. O revisor só corrige."
 - "Passo aberto, nunca oculto: eu afirmo o que a tela mostrou, mostrando a tela."
 - "A mensagem de erro é sua professora — leia até o fim, ela diz exatamente o que bloqueou."
 - "Se não sei, declaro não saber. Honestidade vale mais que qualquer código."
+
+---
+
+## CAPÍTULO 5 — Autenticação: hash, sessão e login (Fase 4)
+
+**Data:** 27/09/2026
+
+> Fase ainda em andamento: cadastro e login 100% provados; faltam o logout e a página protegida (portaria).
+
+### 5.1 Teoria: hash, sal e o proveito de verificar sem guardar
+- **Hash ≠ criptografia:** tritura a senha em pó **irreversível**. Criptografia devolve o original; hash só **verifica** (compara o pó), nunca recupera
+- **Sal = pitada aleatória** por usuário: mesma senha → hashes **diferentes** (mata o padrão/aproveitamento de hashes)
+- **O sal mora dentro do próprio hash:** `$2y$10$` + custo + sal + resultado. Não existe arquivo separado de sais
+- **`password_verify($senha, $hash)`:** lê o sal de dentro do hash, retritura o digitado na hora e **compara pó com pó** — sem armazenar nada (correção: removeu a palavra "buffer")
+- **No banco vai o hash pronto**, coluna `senha_hash`: `password_hash($senha, PASSWORD_DEFAULT)`
+
+### 5.2 O `cadastro.php` — a porta tripla na prática
+1. **Parse error linha 5** — o plano foi escrito como código: `1. $nome = ...` não é PHP válido (o número no meio = sintaxe quebrada). Comentário real é `//`
+2. **Sem `else` = bug:** o `$erro` **informa** mas não **bloqueia** — sem o `else`, o hash+INSERT rodava mesmo com campo vazio. O `else` **impede** o fluxo
+3. **Checagem de duplicado no PHP:** `SELECT id FROM clientes WHERE email = ?` preparado → `num_rows > 0` → `$erro`. Teste provou: e-mail repetido agora mostra **"Este e-mail já está cadastrado"** (antes: `Duplicate entry ... for key 'email'` cru no execute)
+4. **Cascata aninhada** (estrutura nova dominada):
+```
+if (vazio) erro
+else → SELECT email
+   → num_rows>0: erro "já cadastrado"
+   → senão: hash → INSERT → redirect
+```
+
+### 5.3 O banco que ficou limpo
+- `DELETE FROM depoimentos WHERE cliente_id = 2;` então `DELETE FROM clientes WHERE id = 2;` — **filho→pai** (FK, F2 revisitada)
+- Sobraram só os ids 3, 6, 7 com `$2y$10$...` — **zero texto puro**. O José (`'aaa'`) era passivo: sem hash, login nunca funcionaria
+
+### 5.4 O `login.php` — os dois casos provados
+```php
+// fluxo central
+$stmt = $conn->prepare("SELECT id, nome, senha_hash FROM clientes WHERE email = ?");
+$stmt->bind_param('s', $email);
+// ...
+if ($result->num_rows === 0) {
+    $erro = 'E-mail ou senha incorretos';          // anti-enumeração
+} else {
+    if (password_verify($senha, $row['senha_hash'])) {
+        $_SESSION['cliente_id'] = $row['id'];
+        $_SESSION['cliente_nome'] = $row['nome'];
+        header('Location: listar.php');
+        exit;
+    } else {
+        $erro = 'E-mail ou senha incorretos';      // MESMA frase
+    }
+}
+```
+- **`session_start()` no topo**, antes de qualquer HTML: o cookie vai no header, e header só existe antes do corpo (senão `headers already sent`)
+- **Mensagem genérica** nos dois casos (e-mail não existe / senha errada) — não vaza quais e-mails são válidos (anti-enumeração)
+- **Teste feliz:** `teste@teste.com` + `1234` → `listar.php` (pó bateu). **Teste negativo:** senha errada → "E-mail ou senha incorretos", sem vazar nada
+- `if ($_POST)` vs `REQUEST_METHOD === 'POST'`: o método confirma o **veículo**; os `empty()` conferem a **carga** (POST vazio ainda é POST)
+
+### 5.6 Segredo fora do alcance: o `.env` e o `.htaccess` (teste local, 27/09/2026)
+- Criado `C:\xampp\htdocs\infowebti\.env` com as credenciais do banco (`DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`) — o mesmo que o `conectar.php` já usa
+- **Teste curioso (a aula):** abri `http://localhost/infowebti/.env` no navegador → **STATUS 200** = o Apache **servia a senha do banco publicamente**. Segredo dentro da raiz web vaza sem pedir licença
+- **Correção provada:** criado `.htaccess` na pasta com `Require all denied` para `^\.env|\.env$|^\.git` → mesma URL agora responde **403** (bloqueado). Reprovado: 200 → 403
+- **Escopo consciente:** **por enquanto é teste local.** O `.htaccess` bloqueia, mas não é onde o segredo deve morar. Na **Fase 8 (publicação no cPanel)** o `.env`/secrets vão para **fora do `public_html`** — nunca confiar o segredo só a um bloqueio de servidor
+
+### 5.7 Fechamento da F4 (logout, página protegida e o isolamento por sessão)
+- Descoberta no código (teste 200/302): a porteira apontava para `logout.php` — funcionava, mas era caminho torto (quem não logou não tem o que destruir). Corrigido: **sem sessão → `login.php`**; logout só para quem está dentro
+- **Login feliz provado com cookies:** `Invoke-WebRequest` seguiu a cadeia login → `perfil.php` (status 200) e a porta trancada para quem não tem `cliente_id` — acessar `perfil.php` direto sem sessão cai no login
+- **Teste dos 2 usuários (o fechamento da F4):** com depoimentos reais para `cliente_id` 3 e 6, logar como cada um mostrou **só o próprio** depoimento, em telas separadas — o `WHERE depoimentos.cliente_id = ?` + `$_SESSION['cliente_id']` filtraram por dono
+- **`bind_param('i', ...)` = `i`**: `cliente_id` é inteiro (id), não string — tipo importa no `?`
+- **Nomenclatura que valeu aula:** a coluna se chama `cliente_id`; "FK" é o **papel** (a constraint). MySQL filtra pelo **nome da coluna**, não pelo rótulo — confundir os dois leva a `WHERE fk` que não existe
+- `htmlspecialchars()` no texto do depoimento — é a primeira ficha da F6 (anti-XSS): dado do usuário sai como texto, não como HTML executável
+
+### 5.8 Pendências da F4
+- [x] `logout.php` — `session_unset()` + `session_destroy()` + redirect
+- [x] `perfil.php` — **porteira:** `if (!isset($_SESSION['cliente_id'])) { header('Location: login.php'); exit; }`
+- [x] Provar acesso direto a `perfil.php` sem logar → expulsão para o login
+- [x] Teste dos 2 usuários (isolamento por `cliente_id`)
+- [x] **F4 FECHADA (27/09/2026)**
 
 ---
 
